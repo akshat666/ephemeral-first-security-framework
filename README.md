@@ -14,6 +14,19 @@
 </p>
 
 ---
+## Ephemeral-First Security Framework (EFSF)
+
+The Ephemeral-First Security Framework (EFSF) is an open-source security framework that treats **ephemerality as a first-class privacy and security primitive**, rather than relying solely on encryption and access control.
+
+Traditional security architectures focus on protecting data at rest and in transit, but assume long-lived persistence. This assumption increases privacy risk, regulatory exposure, and blast radius in the event of compromise. EFSF challenges this model by enforcing **data minimization through guaranteed lifecycle termination**, where sensitive data is automatically destroyed after its intended use.
+
+EFSF provides a conceptual framework and reference implementations across multiple programming languages (Python, TypeScript, Java) that enable:
+- Time-bound (TTL-based) data storage
+- Cryptographically verifiable data destruction
+- Sealed execution contexts that prevent residual state leakage
+- Explicit lifecycle control for sensitive data and computation
+
+The framework is intended for developers, security architects, and researchers designing systems where privacy, safety, and regulatory compliance require **data to disappear by design**, not just be encrypted.
 
 ## The Problem
 
