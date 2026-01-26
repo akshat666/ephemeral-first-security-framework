@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EFSF Reference Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #8892b0;
+            font-size: 1.1rem;
+        }
+        
+        .architecture {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .layer {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .layer-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #64ffda;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #64ffda;
+        }
+        
+        .components {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .component {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 180px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .component:hover {
+            transform: translateY(-5px);
+            border-color: #4facfe;
+            box-shadow: 0 10px 40px rgba(79, 172, 254, 0.2);
+        }
+        
+        .component-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .component-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .component-desc {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+        
+        /* Pillar-specific colors */
+        .pillar-data { border-left-color: #f472b6; }
+        .pillar-data .component { border-color: rgba(244, 114, 182, 0.3); }
+        .pillar-data .component:hover { border-color: #f472b6; box-shadow: 0 10px 40px rgba(244, 114, 182, 0.2); }
+        
+        .pillar-compute { border-left-color: #fbbf24; }
+        .pillar-compute .component { border-color: rgba(251, 191, 36, 0.3); }
+        .pillar-compute .component:hover { border-color: #fbbf24; box-shadow: 0 10px 40px rgba(251, 191, 36, 0.2); }
+        
+        .pillar-identity { border-left-color: #34d399; }
+        .pillar-identity .component { border-color: rgba(52, 211, 153, 0.3); }
+        .pillar-identity .component:hover { border-color: #34d399; box-shadow: 0 10px 40px rgba(52, 211, 153, 0.2); }
+        
+        .pillar-channels { border-left-color: #60a5fa; }
+        .pillar-channels .component { border-color: rgba(96, 165, 250, 0.3); }
+        .pillar-channels .component:hover { border-color: #60a5fa; box-shadow: 0 10px 40px rgba(96, 165, 250, 0.2); }
+        
+        .pillar-attestation { border-left-color: #a78bfa; }
+        .pillar-attestation .component { border-color: rgba(167, 139, 250, 0.3); }
+        .pillar-attestation .component:hover { border-color: #a78bfa; box-shadow: 0 10px 40px rgba(167, 139, 250, 0.2); }
+        
+        .cross-cutting {
+            background: linear-gradient(90deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1));
+            border: 1px dashed rgba(79, 172, 254, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .cross-cutting-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #4facfe;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .cross-items {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .cross-item {
+            text-align: center;
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        
+        .cross-item-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        
+        .cross-item-name {
+            font-weight: 500;
+            color: #fff;
+        }
+        
+        /* Infrastructure layer */
+        .infrastructure {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .infra-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .infra-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .infra-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .infra-item-name {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+        
+        /* Flow arrows */
+        .flow-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+        }
+        
+        .flow-title {
+            font-size: 1.2rem;
+            color: #64ffda;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .flow-step {
+            background: linear-gradient(145deg, rgba(100, 255, 218, 0.1), rgba(100, 255, 218, 0.05));
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 8px;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 140px;
+        }
+        
+        .flow-step-num {
+            font-size: 0.7rem;
+            color: #64ffda;
+            margin-bottom: 5px;
+        }
+        
+        .flow-step-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        
+        .flow-arrow {
+            color: #64ffda;
+            font-size: 1.5rem;
+        }
+        
+        /* Legend */
+        .legend {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        
+        .legend-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #8892b0;
+            margin-bottom: 15px;
+        }
+        
+        .legend-items {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .component { min-width: 140px; padding: 15px; }
+            .flow-diagram { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ephemeral-First Security Framework</h1>
+            <p class="subtitle">Reference Architecture for Cloud-Native Applications</p>
+        </header>
+        
+        <div class="architecture">
+            <!-- Application Layer -->
+            <div class="layer">
+                <div class="layer-title">Application Layer</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-icon">📱</div>
+                        <div class="component-name">Client Apps</div>
+                        <div class="component-desc">Web, Mobile, API</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🔌</div>
+                        <div class="component-name">API Gateway</div>
+                        <div class="component-desc">Ingress + Auth</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">⚡</div>
+                        <div class="component-name">Microservices</div>
+                        <div class="component-desc">Business Logic</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- EFSF Pillars -->
+            <div class="layer pillar-data">
+                <div class="layer-title" style="border-left-color: #f472b6; color: #f472b6;">Pillar 1: Ephemeral Data</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-icon">🔐</div>
+                        <div class="component-name">Ephemeral Store</div>
+                        <div class="component-desc">TTL + Encryption</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🔑</div>
+                        <div class="component-name">Key Lifecycle Mgr</div>
+                        <div class="component-desc">Rotation + Shred</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">📊</div>
+                        <div class="component-name">Data Classifier</div>
+                        <div class="component-desc">Lifecycle Tags</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🔗</div>
+                        <div class="component-name">Contagion Tracker</div>
+                        <div class="component-desc">Derived Data</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layer pillar-compute">
+                <div class="layer-title" style="border-left-color: #fbbf24; color: #fbbf24;">Pillar 2: Ephemeral Compute</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-icon">📦</div>
+                        <div class="component-name">Sealed Containers</div>
+                        <div class="component-desc">Destroy on Exit</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🛡️</div>
+                        <div class="component-name">TEE Runtime</div>
+                        <div class="component-desc">SGX/SEV/Nitro</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🧠</div>
+                        <div class="component-name">Memory Manager</div>
+                        <div class="component-desc">Zero-on-Free</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">⚙️</div>
+                        <div class="component-name">Serverless Adapter</div>
+                        <div class="component-desc">Lambda/Functions</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layer pillar-identity">
+                <div class="layer-title" style="border-left-color: #34d399; color: #34d399;">Pillar 3: Ephemeral Identity</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-icon">🎫</div>
+                        <div class="component-name">Token Service</div>
+                        <div class="component-desc">Short-lived JWTs</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🔍</div>
+                        <div class="component-name">SPIFFE/SPIRE</div>
+                        <div class="component-desc">Workload Identity</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">⏱️</div>
+                        <div class="component-name">JIT Access</div>
+                        <div class="component-desc">On-demand Grants</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🚫</div>
+                        <div class="component-name">Auto-Revoke</div>
+                        <div class="component-desc">Expiration Enforcer</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layer pillar-channels">
+                <div class="layer-title" style="border-left-color: #60a5fa; color: #60a5fa;">Pillar 4: Ephemeral Channels</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-icon">🔒</div>
+                        <div class="component-name">mTLS Mesh</div>
+                        <div class="component-desc">Forward Secrecy</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">📡</div>
+                        <div class="component-name">Transient Queue</div>
+                        <div class="component-desc">No Persistence</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🔄</div>
+                        <div class="component-name">Session Manager</div>
+                        <div class="component-desc">Channel TTL</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layer pillar-attestation">
+                <div class="layer-title" style="border-left-color: #a78bfa; color: #a78bfa;">Pillar 5: Attestation Layer (Unifying)</div>
+                <div class="components">
+                    <div class="component">
+                        <div class="component-icon">📜</div>
+                        <div class="component-name">Certificate Authority</div>
+                        <div class="component-desc">Signs Destruction</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">📝</div>
+                        <div class="component-name">Audit Logger</div>
+                        <div class="component-desc">Immutable Trail</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">✅</div>
+                        <div class="component-name">Compliance Engine</div>
+                        <div class="component-desc">GDPR/CCPA/HIPAA</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">🔎</div>
+                        <div class="component-name">Verification API</div>
+                        <div class="component-desc">Third-party Proof</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cross-Cutting Concerns -->
+            <div class="cross-cutting">
+                <div class="cross-cutting-title">Cross-Cutting Concerns</div>
+                <div class="cross-items">
+                    <div class="cross-item">
+                        <div class="cross-item-icon">📋</div>
+                        <div class="cross-item-name">Policy Engine</div>
+                    </div>
+                    <div class="cross-item">
+                        <div class="cross-item-icon">📈</div>
+                        <div class="cross-item-name">Observability</div>
+                    </div>
+                    <div class="cross-item">
+                        <div class="cross-item-icon">🛠️</div>
+                        <div class="cross-item-name">Developer SDK</div>
+                    </div>
+                    <div class="cross-item">
+                        <div class="cross-item-icon">🗺️</div>
+                        <div class="cross-item-name">Compliance Mapping</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Infrastructure Layer -->
+            <div class="infrastructure">
+                <div class="infra-title">Cloud Infrastructure (Integrations)</div>
+                <div class="infra-grid">
+                    <div class="infra-item">
+                        <div class="infra-item-name">☁️ AWS / Azure / GCP</div>
+                    </div>
+                    <div class="infra-item">
+                        <div class="infra-item-name">🐳 Kubernetes</div>
+                    </div>
+                    <div class="infra-item">
+                        <div class="infra-item-name">🗄️ Redis / DynamoDB</div>
+                    </div>
+                    <div class="infra-item">
+                        <div class="infra-item-name">🔐 Vault / KMS</div>
+                    </div>
+                    <div class="infra-item">
+                        <div class="infra-item-name">📊 Prometheus / OTel</div>
+                    </div>
+                    <div class="infra-item">
+                        <div class="infra-item-name">🔗 Service Mesh</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Lifecycle Flow -->
+        <div class="flow-section">
+            <div class="flow-title">Ephemeral Data Lifecycle Flow</div>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="flow-step-num">STEP 1</div>
+                    <div class="flow-step-name">Create + Encrypt</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">STEP 2</div>
+                    <div class="flow-step-name">Classify + Tag</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">STEP 3</div>
+                    <div class="flow-step-name">Use + Track</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">STEP 4</div>
+                    <div class="flow-step-name">TTL Expires</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">STEP 5</div>
+                    <div class="flow-step-name">Crypto-Shred</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">STEP 6</div>
+                    <div class="flow-step-name">Issue Certificate</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-title">Legend</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f472b6;"></div>
+                    <div class="legend-label">Ephemeral Data</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fbbf24;"></div>
+                    <div class="legend-label">Ephemeral Compute</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #34d399;"></div>
+                    <div class="legend-label">Ephemeral Identity</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #60a5fa;"></div>
+                    <div class="legend-label">Ephemeral Channels</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #a78bfa;"></div>
+                    <div class="legend-label">Attestation Layer</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
