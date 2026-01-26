@@ -86,10 +86,14 @@ public final class SealedExecution implements AutoCloseable {
      * @throws Exception if the function throws
      */
     public static <T> SealedResult<T> runWithAttestation(AttestationAuthority authority, SealedFunction<SealedContext, T> fn) throws Exception {
-        try (SealedExecution seal = withAttestation(authority)) {
-            T result = fn.apply(seal.getContext());
-            return new SealedResult<>(result, seal.getCertificate());
+        SealedExecution seal = withAttestation(authority);
+        T result;
+        try {
+            result = fn.apply(seal.getContext());
+        } finally {
+            seal.close();
         }
+        return new SealedResult<>(result, seal.getCertificate());
     }
 
     public String getId() {

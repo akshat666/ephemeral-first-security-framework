@@ -30,10 +30,8 @@ public final class MemoryBackend implements StorageBackend {
         if (entry == null) {
             return Optional.empty();
         }
-        if (isExpired(entry)) {
-            data.remove(key);
-            return Optional.empty();
-        }
+        // Return the value even if expired - let the caller handle expiration
+        // This allows EphemeralStore to distinguish between missing and expired records
         return Optional.of(entry.value());
     }
 

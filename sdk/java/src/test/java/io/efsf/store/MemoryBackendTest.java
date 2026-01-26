@@ -84,9 +84,12 @@ class MemoryBackendTest {
 
         Thread.sleep(100);
 
-        // Key should be expired and removed on access
-        assertTrue(backend.get("key1").isEmpty());
+        // get() returns value even if expired (so caller can check expiration metadata)
+        // but exists() returns false for expired keys
+        assertTrue(backend.get("key1").isPresent());
         assertFalse(backend.exists("key1"));
+        // After exists() call, the expired entry is removed
+        assertTrue(backend.get("key1").isEmpty());
     }
 
     @Test

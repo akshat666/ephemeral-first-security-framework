@@ -63,8 +63,9 @@ class RecordTest {
         assertEquals("30s", TTLParser.format(Duration.ofSeconds(30)));
         assertEquals("5m", TTLParser.format(Duration.ofMinutes(5)));
         assertEquals("2h", TTLParser.format(Duration.ofHours(2)));
-        assertEquals("7d", TTLParser.format(Duration.ofDays(7)));
+        assertEquals("3d", TTLParser.format(Duration.ofDays(3)));
         assertEquals("1w", TTLParser.format(Duration.ofDays(7)));
+        assertEquals("2w", TTLParser.format(Duration.ofDays(14)));
     }
 
     @Test
