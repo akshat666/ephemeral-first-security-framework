@@ -15,17 +15,18 @@ import re
 class DataClassification(Enum):
     """
     Data classification levels that determine default TTL policies.
-    
+
     TRANSIENT: Seconds to hours (session tokens, OTPs)
     SHORT_LIVED: Hours to days (shopping carts, temp uploads)
     RETENTION_BOUND: Days to years (invoices, audit logs)
     PERSISTENT: Indefinite, requires explicit justification
     """
+
     TRANSIENT = "TRANSIENT"
     SHORT_LIVED = "SHORT_LIVED"
     RETENTION_BOUND = "RETENTION_BOUND"
     PERSISTENT = "PERSISTENT"
-    
+
     @property
     def default_ttl(self) -> Optional[timedelta]:
         """Returns the default TTL for this classification."""
@@ -36,7 +37,7 @@ class DataClassification(Enum):
             DataClassification.PERSISTENT: None,  # No default TTL
         }
         return defaults[self]
-    
+
     @property
     def max_ttl(self) -> Optional[timedelta]:
         """Returns the maximum allowed TTL for this classification."""
@@ -53,7 +54,7 @@ class DataClassification(Enum):
 class EphemeralRecord:
     """
     Represents an ephemeral data record with lifecycle metadata.
-    
+
     Attributes:
         id: Unique identifier for the record
         classification: Data classification level
@@ -65,6 +66,7 @@ class EphemeralRecord:
         access_count: Number of times the record has been accessed
         metadata: Additional user-defined metadata
     """
+
     id: str
     classification: DataClassification
     created_at: datetime
@@ -74,7 +76,7 @@ class EphemeralRecord:
     key_id: Optional[str] = None
     access_count: int = 0
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     @classmethod
     def create(
         cls,
@@ -84,25 +86,24 @@ class EphemeralRecord:
     ) -> "EphemeralRecord":
         """
         Factory method to create a new ephemeral record.
-        
+
         Args:
             classification: Data classification level
             ttl: Time-to-live (uses classification default if not specified)
             metadata: Additional metadata
-            
+
         Returns:
             New EphemeralRecord instance
         """
         now = datetime.utcnow()
-        
+
         # Use provided TTL or fall back to classification default
         effective_ttl = ttl or classification.default_ttl
         if effective_ttl is None:
             raise ValueError(
-                f"TTL required for {classification.value} classification "
-                "(no default available)"
+                f"TTL required for {classification.value} classification " "(no default available)"
             )
-        
+
         # Validate TTL against classification maximum
         max_ttl = classification.max_ttl
         if max_ttl and effective_ttl > max_ttl:
@@ -110,7 +111,7 @@ class EphemeralRecord:
                 f"TTL {effective_ttl} exceeds maximum {max_ttl} "
                 f"for {classification.value} classification"
             )
-        
+
         return cls(
             id=str(uuid.uuid4()),
             classification=classification,
@@ -120,18 +121,18 @@ class EphemeralRecord:
             key_id=str(uuid.uuid4()),  # Generate key ID for crypto-shredding
             metadata=metadata or {},
         )
-    
+
     @property
     def is_expired(self) -> bool:
         """Check if the record has expired."""
         return datetime.utcnow() >= self.expires_at
-    
+
     @property
     def time_remaining(self) -> timedelta:
         """Get the remaining time before expiration."""
         remaining = self.expires_at - datetime.utcnow()
         return max(remaining, timedelta(0))
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Serialize the record to a dictionary."""
         return {
@@ -145,7 +146,7 @@ class EphemeralRecord:
             "access_count": self.access_count,
             "metadata": self.metadata,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "EphemeralRecord":
         """Deserialize a record from a dictionary."""
@@ -165,41 +166,41 @@ class EphemeralRecord:
 def parse_ttl(ttl_string: str) -> timedelta:
     """
     Parse a human-readable TTL string into a timedelta.
-    
+
     Supported formats:
         - "30s" or "30sec" or "30seconds" -> 30 seconds
         - "5m" or "5min" or "5minutes" -> 5 minutes
         - "2h" or "2hr" or "2hours" -> 2 hours
         - "7d" or "7days" -> 7 days
-        
+
     Args:
         ttl_string: Human-readable TTL string
-        
+
     Returns:
         Equivalent timedelta
-        
+
     Raises:
         ValueError: If the string cannot be parsed
     """
     if isinstance(ttl_string, timedelta):
         return ttl_string
-    
-    pattern = r'^(\d+)\s*(s|sec|seconds?|m|min|minutes?|h|hr|hours?|d|days?)$'
+
+    pattern = r"^(\d+)\s*(s|sec|seconds?|m|min|minutes?|h|hr|hours?|d|days?)$"
     match = re.match(pattern, ttl_string.lower().strip())
-    
+
     if not match:
         raise ValueError(f"Cannot parse TTL string: {ttl_string}")
-    
+
     value = int(match.group(1))
     unit = match.group(2)
-    
-    if unit.startswith('s'):
+
+    if unit.startswith("s"):
         return timedelta(seconds=value)
-    elif unit.startswith('m'):
+    elif unit.startswith("m"):
         return timedelta(minutes=value)
-    elif unit.startswith('h'):
+    elif unit.startswith("h"):
         return timedelta(hours=value)
-    elif unit.startswith('d'):
+    elif unit.startswith("d"):
         return timedelta(days=value)
     else:
         raise ValueError(f"Unknown time unit: {unit}")

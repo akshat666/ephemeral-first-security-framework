@@ -29,19 +29,19 @@ from efsf.certificate import (
 )
 from efsf.exceptions import EFSFError
 
-P = ParamSpec('P')
-T = TypeVar('T')
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
 def secure_zero_memory(data: Any) -> None:
     """
     Attempt to securely zero memory containing sensitive data.
-    
+
     WARNING: This is best-effort in Python due to:
     - Garbage collection may have already copied data
     - String interning
     - Immutable types
-    
+
     For true security, use hardware enclaves or HSMs.
     """
     if isinstance(data, bytearray):
@@ -60,28 +60,29 @@ def secure_zero_memory(data: Any) -> None:
         data.clear()
     # For immutable types (str, bytes, int, tuple), we can't zero them
     # We can only hope garbage collection handles them
-    
+
 
 @dataclass
 class SealedContext:
     """
     Context object passed to sealed functions.
-    
+
     Tracks all sensitive data created during execution
     for cleanup on exit.
     """
+
     execution_id: str
     started_at: datetime
     _sensitive_refs: List[weakref.ref] = field(default_factory=list)
     _cleanup_callbacks: List[Callable[[], None]] = field(default_factory=list)
-    
+
     def track(self, obj: Any) -> Any:
         """
         Track an object for cleanup on context exit.
-        
+
         Args:
             obj: Object to track
-            
+
         Returns:
             The same object (for chaining)
         """
@@ -91,11 +92,11 @@ class SealedContext:
             # Some objects can't have weak references
             pass
         return obj
-    
+
     def on_cleanup(self, callback: Callable[[], None]) -> None:
         """Register a cleanup callback to run on context exit."""
         self._cleanup_callbacks.append(callback)
-    
+
     def _cleanup(self) -> None:
         """Internal: Run cleanup routines."""
         # Run registered callbacks
@@ -104,17 +105,17 @@ class SealedContext:
                 callback()
             except Exception:
                 pass  # Don't let cleanup errors propagate
-        
+
         # Attempt to zero tracked objects
         for ref in self._sensitive_refs:
             obj = ref()
             if obj is not None:
                 secure_zero_memory(obj)
-        
+
         # Clear our own state
         self._sensitive_refs.clear()
         self._cleanup_callbacks.clear()
-        
+
         # Force garbage collection
         gc.collect()
 
@@ -122,10 +123,10 @@ class SealedContext:
 class SealedExecution:
     """
     Context manager for sealed execution.
-    
+
     All state created within this context is destroyed on exit,
     and a destruction certificate can be generated.
-    
+
     Example:
         with SealedExecution(attestation=True) as ctx:
             sensitive_data = ctx.track(process_secrets())
@@ -133,9 +134,9 @@ class SealedExecution:
         # sensitive_data is now destroyed
         # ctx.certificate contains proof of destruction
     """
-    
+
     _default_authority: Optional[AttestationAuthority] = None
-    
+
     def __init__(
         self,
         attestation: bool = False,
@@ -144,7 +145,7 @@ class SealedExecution:
     ):
         """
         Initialize a sealed execution context.
-        
+
         Args:
             attestation: Whether to generate a destruction certificate
             authority: Attestation authority for signing certificates
@@ -156,24 +157,24 @@ class SealedExecution:
         self.context: Optional[SealedContext] = None
         self.certificate: Optional[DestructionCertificate] = None
         self._chain_of_custody: Optional[ChainOfCustody] = None
-        
+
         if attestation and authority is None:
             if SealedExecution._default_authority is None:
                 SealedExecution._default_authority = AttestationAuthority()
             self.authority = SealedExecution._default_authority
-    
+
     def __enter__(self) -> SealedContext:
         """Enter the sealed execution context."""
         import uuid
-        
+
         execution_id = str(uuid.uuid4())
         now = datetime.utcnow()
-        
+
         self.context = SealedContext(
             execution_id=execution_id,
             started_at=now,
         )
-        
+
         if self.attestation:
             self._chain_of_custody = ChainOfCustody(
                 created_at=now,
@@ -183,14 +184,14 @@ class SealedExecution:
                 accessor="sealed_execution",
                 action="context_enter",
             )
-        
+
         return self.context
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         """Exit the sealed execution context and destroy all state."""
         if self.context is None:
             return False
-        
+
         # Record exit in chain of custody
         if self._chain_of_custody:
             action = "context_exit_error" if exc_type else "context_exit_normal"
@@ -198,10 +199,10 @@ class SealedExecution:
                 accessor="sealed_execution",
                 action=action,
             )
-        
+
         # Perform cleanup
         self.context._cleanup()
-        
+
         # Generate destruction certificate if requested
         if self.attestation and self.authority:
             resource = ResourceInfo(
@@ -210,24 +211,25 @@ class SealedExecution:
                 classification="TRANSIENT",
                 metadata={
                     "started_at": self.context.started_at.isoformat(),
-                    "duration_ms": (datetime.utcnow() - self.context.started_at).total_seconds() * 1000,
+                    "duration_ms": (datetime.utcnow() - self.context.started_at).total_seconds()
+                    * 1000,
                     "error": str(exc_val) if exc_val else None,
                     **self.metadata,
                 },
             )
-            
+
             cert = DestructionCertificate.create(
                 resource=resource,
                 destruction_method=DestructionMethod.MEMORY_ZERO,
                 verified_by=self.authority.authority_id,
                 chain_of_custody=self._chain_of_custody,
             )
-            
+
             self.certificate = self.authority.sign_certificate(cert)
-        
+
         # Clear context reference
         self.context = None
-        
+
         # Don't suppress exceptions
         return False
 
@@ -239,24 +241,25 @@ def sealed(
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Decorator for sealed function execution.
-    
+
     Wraps a function so that all local state is destroyed
     when the function returns.
-    
+
     Example:
         @sealed(attestation=True)
         def process_sensitive(ssn: str) -> str:
             # All local variables destroyed on return
             return f"processed:{hash(ssn)}"
-    
+
     Args:
         attestation: Whether to generate destruction certificates
         authority: Attestation authority for signing
         metadata: Additional metadata
-        
+
     Returns:
         Decorated function
     """
+
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -269,27 +272,27 @@ def sealed(
                     **(metadata or {}),
                 },
             )
-            
+
             with seal as ctx:
                 # Track function arguments
                 for arg in args:
                     ctx.track(arg)
                 for value in kwargs.values():
                     ctx.track(value)
-                
+
                 result = func(*args, **kwargs)
-            
+
             # Attach certificate to result if it's a dict
             if attestation and seal.certificate and isinstance(result, dict):
-                result['_destruction_certificate'] = seal.certificate.to_dict()
-            
+                result["_destruction_certificate"] = seal.certificate.to_dict()
+
             return result
-        
+
         # Attach method to get the last certificate
         wrapper._last_execution = None
-        
+
         return wrapper
-    
+
     return decorator
 
 
@@ -297,10 +300,10 @@ def sealed(
 def ephemeral_scope(name: str = "anonymous"):
     """
     Simple context manager for ephemeral variable scope.
-    
+
     Variables created in this scope should be considered
     destroyed on exit (best-effort cleanup).
-    
+
     Example:
         with ephemeral_scope("payment_processing"):
             card_number = get_card()
@@ -308,7 +311,7 @@ def ephemeral_scope(name: str = "anonymous"):
         # card_number cleanup attempted
     """
     scope_vars: Dict[str, Any] = {}
-    
+
     try:
         yield scope_vars
     finally:
