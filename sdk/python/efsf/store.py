@@ -69,7 +69,7 @@ class MemoryBackend(StorageBackend):
     Records are checked for expiration on access.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._data: dict[str, dict[str, Any]] = {}
         self._lock = threading.Lock()
 
@@ -89,7 +89,8 @@ class MemoryBackend(StorageBackend):
             if datetime.utcnow() >= entry["expires_at"]:
                 del self._data[key]
                 return None
-            return entry["value"]
+            result: Optional[str] = entry["value"]
+            return result
 
     def delete(self, key: str) -> bool:
         with self._lock:
@@ -121,7 +122,7 @@ class RedisBackend(StorageBackend):
     Requires the `redis` package: pip install redis
     """
 
-    def __init__(self, url: str = "redis://localhost:6379", **kwargs):
+    def __init__(self, url: str = "redis://localhost:6379", **kwargs: Any) -> None:
         try:
             import redis
         except ImportError:
@@ -137,7 +138,7 @@ class RedisBackend(StorageBackend):
 
     def set(self, key: str, value: str, ttl_seconds: int) -> bool:
         try:
-            return self._client.setex(self._key(key), ttl_seconds, value)
+            return bool(self._client.setex(self._key(key), ttl_seconds, value))
         except Exception as e:
             raise BackendError("redis", f"Failed to set: {e}")
 
@@ -150,13 +151,13 @@ class RedisBackend(StorageBackend):
 
     def delete(self, key: str) -> bool:
         try:
-            return self._client.delete(self._key(key)) > 0
+            return bool(self._client.delete(self._key(key)) > 0)
         except Exception as e:
             raise BackendError("redis", f"Failed to delete: {e}")
 
     def exists(self, key: str) -> bool:
         try:
-            return self._client.exists(self._key(key)) > 0
+            return bool(self._client.exists(self._key(key)) > 0)
         except Exception as e:
             raise BackendError("redis", f"Failed to check exists: {e}")
 
@@ -251,6 +252,7 @@ class EphemeralStore:
 
         # Initialize attestation
         self._attestation_enabled = attestation
+        self._authority: Optional[AttestationAuthority]
         if attestation:
             self._authority = attestation_authority or AttestationAuthority()
         else:

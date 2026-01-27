@@ -218,10 +218,10 @@ class AttestationAuthority:
     @property
     def public_key_bytes(self) -> bytes:
         """Get the public key in raw bytes format."""
-        return self._public_key.public_bytes(
+        return bytes(self._public_key.public_bytes(
             encoding=serialization.Encoding.Raw,
             format=serialization.PublicFormat.Raw,
-        )
+        ))
 
     @property
     def public_key_b64(self) -> str:

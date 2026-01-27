@@ -15,7 +15,7 @@ import weakref
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Callable, Generator, Optional, TypeVar
 
 from typing_extensions import ParamSpec
 
@@ -287,7 +287,7 @@ def sealed(
             return result
 
         # Attach method to get the last certificate
-        wrapper._last_execution = None
+        wrapper._last_execution = None  # type: ignore[attr-defined]
 
         return wrapper
 
@@ -295,7 +295,7 @@ def sealed(
 
 
 @contextmanager
-def ephemeral_scope(name: str = "anonymous"):
+def ephemeral_scope(name: str = "anonymous") -> Generator[dict[str, Any], None, None]:
     """
     Simple context manager for ephemeral variable scope.
 

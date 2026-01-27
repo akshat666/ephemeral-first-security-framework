@@ -246,7 +246,7 @@ class CryptoProvider:
             nonce = base64.b64decode(payload.nonce)
             ciphertext = base64.b64decode(payload.ciphertext)
 
-            plaintext = aesgcm.decrypt(nonce, ciphertext, associated_data)
+            plaintext: bytes = aesgcm.decrypt(nonce, ciphertext, associated_data)
             return plaintext
         except Exception as e:
             raise CryptoError("decrypt", str(e))
@@ -263,7 +263,8 @@ class CryptoProvider:
     def decrypt_json(self, payload: EncryptedPayload) -> dict[str, Any]:
         """Convenience method to decrypt to a JSON dict."""
         plaintext = self.decrypt(payload)
-        return json.loads(plaintext.decode("utf-8"))
+        result: dict[str, Any] = json.loads(plaintext.decode("utf-8"))
+        return result
 
     def derive_key(
         self,
@@ -286,7 +287,7 @@ class CryptoProvider:
             salt=None,
             info=context,
         )
-        return hkdf.derive(self._master_key)
+        return bytes(hkdf.derive(self._master_key))
 
 
 def constant_time_compare(a: bytes, b: bytes) -> bool:
