@@ -15,7 +15,9 @@ import weakref
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Optional, ParamSpec, TypeVar
+from typing import Any, Callable, Optional, TypeVar
+
+from typing_extensions import ParamSpec
 
 from efsf.certificate import (
     AttestationAuthority,
@@ -183,10 +185,10 @@ class SealedExecution:
 
         return self.context
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Exit the sealed execution context and destroy all state."""
         if self.context is None:
-            return False
+            return
 
         # Record exit in chain of custody
         if self._chain_of_custody:
@@ -227,7 +229,7 @@ class SealedExecution:
         self.context = None
 
         # Don't suppress exceptions
-        return False
+        return
 
 
 def sealed(

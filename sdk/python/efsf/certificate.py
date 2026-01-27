@@ -63,7 +63,7 @@ class ChainOfCustody:
     access_log: list[dict[str, Any]] = field(default_factory=list)
     hash_chain: list[str] = field(default_factory=list)
 
-    def add_access(self, accessor: str, action: str, timestamp: Optional[datetime] = None):
+    def add_access(self, accessor: str, action: str, timestamp: Optional[datetime] = None) -> None:
         """Record an access event."""
         ts = timestamp or datetime.utcnow()
         event = {

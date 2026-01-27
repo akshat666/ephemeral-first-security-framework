@@ -260,7 +260,7 @@ class CryptoProvider:
         plaintext = json.dumps(data).encode("utf-8")
         return self.encrypt(plaintext, dek)
 
-    def decrypt_json(self, payload: EncryptedPayload) -> dict:
+    def decrypt_json(self, payload: EncryptedPayload) -> dict[str, Any]:
         """Convenience method to decrypt to a JSON dict."""
         plaintext = self.decrypt(payload)
         return json.loads(plaintext.decode("utf-8"))
