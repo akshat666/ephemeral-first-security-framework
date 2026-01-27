@@ -12,14 +12,14 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 try:
+    from cryptography.hazmat.primitives import serialization
     from cryptography.hazmat.primitives.asymmetric.ed25519 import (
         Ed25519PrivateKey,
         Ed25519PublicKey,
     )
-    from cryptography.hazmat.primitives import serialization
 
     HAS_CRYPTOGRAPHY = True
 except ImportError:
@@ -46,7 +46,7 @@ class ResourceInfo:
     resource_type: str  # ephemeral_data, sealed_compute, credential, channel
     resource_id: str
     classification: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
@@ -63,8 +63,8 @@ class ChainOfCustody:
 
     created_at: datetime
     created_by: Optional[str] = None
-    access_log: List[Dict[str, Any]] = field(default_factory=list)
-    hash_chain: List[str] = field(default_factory=list)
+    access_log: list[dict[str, Any]] = field(default_factory=list)
+    hash_chain: list[str] = field(default_factory=list)
 
     def add_access(self, accessor: str, action: str, timestamp: Optional[datetime] = None):
         """Record an access event."""
@@ -154,7 +154,7 @@ class DestructionCertificate:
             chain_of_custody=chain_of_custody,
         )
 
-    def to_dict(self, include_signature: bool = True) -> Dict[str, Any]:
+    def to_dict(self, include_signature: bool = True) -> dict[str, Any]:
         """Serialize certificate to dictionary."""
         data = {
             "version": self.version,
@@ -216,7 +216,7 @@ class AttestationAuthority:
         self.authority_id = authority_id
         self._private_key = Ed25519PrivateKey.generate()
         self._public_key = self._private_key.public_key()
-        self._issued_certificates: Dict[str, DestructionCertificate] = {}
+        self._issued_certificates: dict[str, DestructionCertificate] = {}
 
     @property
     def public_key_bytes(self) -> bytes:
@@ -282,7 +282,7 @@ class AttestationAuthority:
         classification: str,
         destruction_method: DestructionMethod,
         chain_of_custody: Optional[ChainOfCustody] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> DestructionCertificate:
         """
         Issue a new signed destruction certificate.
@@ -324,7 +324,7 @@ class AttestationAuthority:
         self,
         resource_id: Optional[str] = None,
         since: Optional[datetime] = None,
-    ) -> List[DestructionCertificate]:
+    ) -> list[DestructionCertificate]:
         """
         List issued certificates with optional filtering.
 

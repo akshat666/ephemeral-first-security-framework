@@ -4,12 +4,12 @@ EFSF Record Types
 Defines the EphemeralRecord and related data structures.
 """
 
+import re
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, Optional
-import uuid
-import re
+from typing import Any, Optional
 
 
 class DataClassification(Enum):
@@ -75,14 +75,14 @@ class EphemeralRecord:
     encrypted: bool = True
     key_id: Optional[str] = None
     access_count: int = 0
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def create(
         cls,
         classification: DataClassification = DataClassification.TRANSIENT,
         ttl: Optional[timedelta] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> "EphemeralRecord":
         """
         Factory method to create a new ephemeral record.
@@ -133,7 +133,7 @@ class EphemeralRecord:
         remaining = self.expires_at - datetime.utcnow()
         return max(remaining, timedelta(0))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize the record to a dictionary."""
         return {
             "id": self.id,
@@ -148,7 +148,7 @@ class EphemeralRecord:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "EphemeralRecord":
+    def from_dict(cls, data: dict[str, Any]) -> "EphemeralRecord":
         """Deserialize a record from a dictionary."""
         return cls(
             id=data["id"],

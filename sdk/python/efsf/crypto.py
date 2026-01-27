@@ -6,17 +6,16 @@ Uses AES-256-GCM for authenticated encryption.
 """
 
 import base64
-import hashlib
+import json
 import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional, Tuple
-import json
+from typing import Optional
 
 # Use cryptography library if available, fall back to basic implementation
 try:
-    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
     HAS_CRYPTOGRAPHY = True

@@ -4,7 +4,7 @@ Tests for EFSF Sealed Execution
 
 import pytest
 
-from efsf import sealed, SealedExecution
+from efsf import SealedExecution, sealed
 from efsf.certificate import DestructionMethod
 
 
@@ -52,7 +52,7 @@ class TestSealedExecution:
         seal = SealedExecution(attestation=True)
 
         with seal as ctx:
-            sensitive = ctx.track(bytearray(b"secret"))
+            ctx.track(bytearray(b"secret"))
             # Do something with sensitive data
 
         # Certificate should be generated

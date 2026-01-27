@@ -11,14 +11,11 @@ with Intel SGX, AMD SEV, or AWS Nitro Enclaves.
 
 import functools
 import gc
-import sys
-import ctypes
+import weakref
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, TypeVar, ParamSpec
-import traceback
-import weakref
+from typing import Any, Callable, Optional, ParamSpec, TypeVar
 
 from efsf.certificate import (
     AttestationAuthority,
@@ -27,7 +24,6 @@ from efsf.certificate import (
     DestructionMethod,
     ResourceInfo,
 )
-from efsf.exceptions import EFSFError
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -73,8 +69,8 @@ class SealedContext:
 
     execution_id: str
     started_at: datetime
-    _sensitive_refs: List[weakref.ref] = field(default_factory=list)
-    _cleanup_callbacks: List[Callable[[], None]] = field(default_factory=list)
+    _sensitive_refs: list[weakref.ref] = field(default_factory=list)
+    _cleanup_callbacks: list[Callable[[], None]] = field(default_factory=list)
 
     def track(self, obj: Any) -> Any:
         """
@@ -141,7 +137,7 @@ class SealedExecution:
         self,
         attestation: bool = False,
         authority: Optional[AttestationAuthority] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ):
         """
         Initialize a sealed execution context.
@@ -237,7 +233,7 @@ class SealedExecution:
 def sealed(
     attestation: bool = False,
     authority: Optional[AttestationAuthority] = None,
-    metadata: Optional[Dict[str, Any]] = None,
+    metadata: Optional[dict[str, Any]] = None,
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """
     Decorator for sealed function execution.
@@ -310,7 +306,7 @@ def ephemeral_scope(name: str = "anonymous"):
             result = process_payment(card_number)
         # card_number cleanup attempted
     """
-    scope_vars: Dict[str, Any] = {}
+    scope_vars: dict[str, Any] = {}
 
     try:
         yield scope_vars

@@ -8,12 +8,10 @@ from datetime import timedelta
 import pytest
 
 from efsf import (
-    EphemeralStore,
-    EphemeralRecord,
     DataClassification,
-    DestructionCertificate,
+    EphemeralRecord,
+    EphemeralStore,
     RecordNotFoundError,
-    RecordExpiredError,
 )
 from efsf.record import parse_ttl
 

@@ -9,23 +9,23 @@ import json
 import threading
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlparse
 
-from efsf.record import DataClassification, EphemeralRecord, parse_ttl
-from efsf.crypto import CryptoProvider, EncryptedPayload, DataEncryptionKey
 from efsf.certificate import (
     AttestationAuthority,
     ChainOfCustody,
     DestructionCertificate,
     DestructionMethod,
 )
+from efsf.crypto import CryptoProvider, EncryptedPayload
 from efsf.exceptions import (
-    RecordNotFoundError,
-    RecordExpiredError,
     BackendError,
+    RecordExpiredError,
+    RecordNotFoundError,
     ValidationError,
 )
+from efsf.record import DataClassification, EphemeralRecord, parse_ttl
 
 
 class StorageBackend(ABC):
@@ -70,7 +70,7 @@ class MemoryBackend(StorageBackend):
     """
 
     def __init__(self):
-        self._data: Dict[str, Dict[str, Any]] = {}
+        self._data: dict[str, dict[str, Any]] = {}
         self._lock = threading.Lock()
 
     def set(self, key: str, value: str, ttl_seconds: int) -> bool:
@@ -257,17 +257,17 @@ class EphemeralStore:
             self._authority = None
 
         # Track records and their metadata
-        self._records: Dict[str, EphemeralRecord] = {}
-        self._custody: Dict[str, ChainOfCustody] = {}
-        self._certificates: Dict[str, DestructionCertificate] = {}
+        self._records: dict[str, EphemeralRecord] = {}
+        self._custody: dict[str, ChainOfCustody] = {}
+        self._certificates: dict[str, DestructionCertificate] = {}
         self._lock = threading.Lock()
 
     def put(
         self,
-        data: Dict[str, Any],
+        data: dict[str, Any],
         ttl: Optional[Union[str, timedelta]] = None,
         classification: Union[str, DataClassification] = DataClassification.TRANSIENT,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ) -> EphemeralRecord:
         """
         Store data with automatic encryption and TTL.
@@ -335,7 +335,7 @@ class EphemeralStore:
 
         return record
 
-    def get(self, record_id: str) -> Dict[str, Any]:
+    def get(self, record_id: str) -> dict[str, Any]:
         """
         Retrieve data by record ID.
 
@@ -473,7 +473,7 @@ class EphemeralStore:
     def list_certificates(
         self,
         since: Optional[datetime] = None,
-    ) -> List[DestructionCertificate]:
+    ) -> list[DestructionCertificate]:
         """List all destruction certificates."""
         with self._lock:
             certs = list(self._certificates.values())
@@ -483,7 +483,7 @@ class EphemeralStore:
 
         return sorted(certs, key=lambda c: c.destruction_timestamp, reverse=True)
 
-    def stats(self) -> Dict[str, Any]:
+    def stats(self) -> dict[str, Any]:
         """Get store statistics."""
         with self._lock:
             return {
