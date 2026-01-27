@@ -15,7 +15,8 @@ import weakref
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Generator, Optional, TypeVar
+from collections.abc import Generator
+from typing import Any, Callable, Optional, TypeVar
 
 from typing_extensions import ParamSpec
 
