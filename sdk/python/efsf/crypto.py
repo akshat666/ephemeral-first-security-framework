@@ -10,7 +10,7 @@ import json
 import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Any, Optional
 
 # Use cryptography library if available, fall back to basic implementation
 try:
