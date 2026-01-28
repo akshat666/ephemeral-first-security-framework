@@ -11,6 +11,7 @@ from efsf import (
     DataClassification,
     EphemeralRecord,
     EphemeralStore,
+    RecordExpiredError,
     RecordNotFoundError,
 )
 from efsf.record import parse_ttl
@@ -229,7 +230,7 @@ class TestCryptoShredding:
 
         # Even if we had the encrypted data, we can't decrypt it
         # because the key is destroyed
-        with pytest.raises(RecordNotFoundError):
+        with pytest.raises(RecordExpiredError):
             store.get(record.id)
 
 

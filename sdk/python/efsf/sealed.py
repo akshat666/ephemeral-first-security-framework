@@ -12,10 +12,10 @@ with Intel SGX, AMD SEV, or AWS Nitro Enclaves.
 import functools
 import gc
 import weakref
+from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime
-from collections.abc import Generator
 from typing import Any, Callable, Optional, TypeVar
 
 from typing_extensions import ParamSpec
@@ -73,6 +73,7 @@ class SealedContext:
     execution_id: str
     started_at: datetime
     _sensitive_refs: list[weakref.ref] = field(default_factory=list)
+    _sensitive_direct: list[Any] = field(default_factory=list)
     _cleanup_callbacks: list[Callable[[], None]] = field(default_factory=list)
 
     def track(self, obj: Any) -> Any:
@@ -88,8 +89,9 @@ class SealedContext:
         try:
             self._sensitive_refs.append(weakref.ref(obj))
         except TypeError:
-            # Some objects can't have weak references
-            pass
+            # Some objects (e.g. bytearray) can't have weak references;
+            # store a direct reference so we can still zero them on cleanup.
+            self._sensitive_direct.append(obj)
         return obj
 
     def on_cleanup(self, callback: Callable[[], None]) -> None:
@@ -111,8 +113,12 @@ class SealedContext:
             if obj is not None:
                 secure_zero_memory(obj)
 
+        for obj in self._sensitive_direct:
+            secure_zero_memory(obj)
+
         # Clear our own state
         self._sensitive_refs.clear()
+        self._sensitive_direct.clear()
         self._cleanup_callbacks.clear()
 
         # Force garbage collection
