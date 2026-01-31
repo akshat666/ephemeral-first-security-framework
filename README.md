@@ -69,7 +69,7 @@ npm install @efsf/typescript
 **Java:**
 ```xml
 <dependency>
-    <groupId>io.efsf</groupId>
+    <groupId>app.hideit</groupId>
     <artifactId>efsf-java</artifactId>
     <version>0.3.0</version>
 </dependency>
@@ -126,8 +126,8 @@ const certificate = await store.destroy(record.id);
 
 **Java:**
 ```java
-import io.efsf.EphemeralStore;
-import io.efsf.record.DataClassification;
+import app.hideit.EphemeralStore;
+import app.hideit.record.DataClassification;
 
 // Initialize an ephemeral store
 try (EphemeralStore store = EphemeralStore.builder()
@@ -185,7 +185,7 @@ const result = await processSensitiveData('123-45-6789', 75000.00);
 
 **Java:**
 ```java
-import io.efsf.sealed.SealedExecution;
+import app.hideit.sealed.SealedExecution;
 
 // Using try-with-resources for automatic cleanup
 try (SealedExecution seal = SealedExecution.create()) {
@@ -282,7 +282,7 @@ efsf/
 │   │   ├── tests/       # Test suite
 │   │   └── examples/    # TypeScript examples
 │   └── java/            # Java SDK
-│       ├── src/         # Core library (io.efsf.*)
+│       ├── src/         # Core library (app.hideit.*)
 │       ├── examples/    # Java examples
 │       └── pom.xml      # Maven configuration
 ├── docs/

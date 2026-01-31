@@ -13,7 +13,7 @@ Add the dependency to your `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>io.efsf</groupId>
+    <groupId>app.hideit</groupId>
     <artifactId>efsf-java</artifactId>
     <version>0.3.0</version>
 </dependency>
@@ -32,10 +32,10 @@ For Redis backend support, also add:
 ## Quick Start
 
 ```java
-import io.efsf.EphemeralStore;
-import io.efsf.record.DataClassification;
-import io.efsf.record.EphemeralRecord;
-import io.efsf.certificate.DestructionCertificate;
+import app.hideit.EphemeralStore;
+import app.hideit.record.DataClassification;
+import app.hideit.record.EphemeralRecord;
+import app.hideit.certificate.DestructionCertificate;
 
 import java.util.Map;
 
@@ -65,8 +65,8 @@ try (EphemeralStore store = EphemeralStore.builder()
 Process sensitive data with guaranteed cleanup:
 
 ```java
-import io.efsf.sealed.SealedExecution;
-import io.efsf.certificate.AttestationAuthority;
+import app.hideit.sealed.SealedExecution;
+import app.hideit.certificate.AttestationAuthority;
 
 // Using try-with-resources
 try (SealedExecution seal = SealedExecution.create()) {
@@ -221,8 +221,8 @@ mvn test
 ## Running Examples
 
 ```bash
-mvn exec:java -Dexec.mainClass="io.efsf.examples.BasicUsageExample"
-mvn exec:java -Dexec.mainClass="io.efsf.examples.SpringBootExample"
+mvn exec:java -Dexec.mainClass="app.hideit.examples.BasicUsageExample"
+mvn exec:java -Dexec.mainClass="app.hideit.examples.SpringBootExample"
 ```
 
 ## API Reference

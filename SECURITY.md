@@ -14,7 +14,7 @@ The EFSF team takes security vulnerabilities seriously. We appreciate your effor
 
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to: **security@efsf.io** (placeholder - update with real address)
+Instead, please report them via email to: **akshat666@gmail.com**
 
 Include the following information:
 
