@@ -61,8 +61,8 @@ Enhancement suggestions are welcome! Please include:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/efsf.git
-cd efsf
+git clone https://github.com/YOUR_USERNAME/ephemeral-first-security-framework.git
+cd ephemeral-first-security-framework
 
 # Create virtual environment
 python -m venv venv

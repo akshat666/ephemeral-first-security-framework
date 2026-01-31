@@ -39,6 +39,11 @@ Modern security assumes data will exist forever and tries to protect it indefini
 
 **What if the data simply wasn't there to steal?**
 
+## Motivation & Research Context
+
+Modern security architectures treat encryption as the primary defense, assuming
+that data will persist securely over time. This framework challenges that paradigm by formalizing ephemerality — a design principle where state expires and is irrecoverably destroyed — as a first-class security primitive.
+
 ## The EFSF Thesis
 
 > **Ephemerality—the enforced destruction of compute, storage, and state after use—is a stronger and more fundamental privacy primitive than encryption alone.**
