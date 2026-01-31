@@ -198,7 +198,9 @@ jobs:
 
       - name: Import GPG key
         run: |
-          echo "$GPG_SIGNING_KEY" | gpg --batch --import
+          printf '%s\n' "$GPG_SIGNING_KEY" > /tmp/private-key.asc
+          gpg --batch --import /tmp/private-key.asc
+          rm -f /tmp/private-key.asc
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
           gpgconf --kill gpg-agent
