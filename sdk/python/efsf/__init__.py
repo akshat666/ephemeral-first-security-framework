@@ -25,7 +25,7 @@ from efsf.record import DataClassification, EphemeralRecord
 from efsf.sealed import SealedExecution, sealed
 from efsf.store import EphemeralStore
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __all__ = [
     # Core
     "EphemeralStore",

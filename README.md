@@ -71,7 +71,7 @@ npm install @efsf/typescript
 <dependency>
     <groupId>io.efsf</groupId>
     <artifactId>efsf-java</artifactId>
-    <version>0.2.0</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
