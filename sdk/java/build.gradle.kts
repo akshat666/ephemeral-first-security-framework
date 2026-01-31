@@ -1,9 +1,8 @@
 plugins {
     java
     `java-library`
-    `maven-publish`
     signing
-    id("tech.yanand.maven-central-publish") version "1.2.0"
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 group = "app.hideit"
@@ -13,8 +12,6 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
-    withSourcesJar()
-    withJavadocJar()
 }
 
 repositories {
@@ -65,48 +62,38 @@ tasks.compileTestJava {
     options.encoding = "UTF-8"
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
+mavenPublishing {
+    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
+    signAllPublications()
 
-            pom {
-                name.set("EFSF Java SDK")
-                description.set("Ephemeral-First Security Framework - Java SDK")
-                url.set("https://github.com/efsf/efsf")
+    pom {
+        name.set("EFSF Java SDK")
+        description.set("Ephemeral-First Security Framework - Java SDK")
+        url.set("https://github.com/efsf/efsf")
 
-                licenses {
-                    license {
-                        name.set("Apache License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
-                    }
-                }
-
-                developers {
-                    developer {
-                        name.set("EFSF Contributors")
-                        url.set("https://github.com/efsf/efsf")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/efsf/efsf.git")
-                    developerConnection.set("scm:git:ssh://github.com/efsf/efsf.git")
-                    url.set("https://github.com/efsf/efsf")
-                }
+        licenses {
+            license {
+                name.set("Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0")
             }
         }
+
+        developers {
+            developer {
+                name.set("EFSF Contributors")
+                url.set("https://github.com/efsf/efsf")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/efsf/efsf.git")
+            developerConnection.set("scm:git:ssh://github.com/efsf/efsf.git")
+            url.set("https://github.com/efsf/efsf")
+        }
     }
-
-}
-
-mavenCentralPublish {
-    authToken.set(System.getenv("MAVEN_CENTRAL_TOKEN") ?: "")
-    publishingType.set("AUTOMATIC")
 }
 
 signing {
     useGpgCmd()
-    sign(publishing.publications["maven"])
     isRequired = System.getenv("GPG_PASSPHRASE") != null
 }
