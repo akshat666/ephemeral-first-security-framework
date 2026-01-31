@@ -3,6 +3,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("tech.yanand.maven-central-publish") version "1.2.0"
 }
 
 group = "app.hideit"
@@ -81,6 +82,13 @@ publishing {
                     }
                 }
 
+                developers {
+                    developer {
+                        name.set("EFSF Contributors")
+                        url.set("https://github.com/efsf/efsf")
+                    }
+                }
+
                 scm {
                     connection.set("scm:git:git://github.com/efsf/efsf.git")
                     developerConnection.set("scm:git:ssh://github.com/efsf/efsf.git")
@@ -90,16 +98,11 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name = "MavenCentral"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("MAVEN_USERNAME") ?: ""
-                password = System.getenv("MAVEN_PASSWORD") ?: ""
-            }
-        }
-    }
+}
+
+mavenCentralPublish {
+    authToken.set(System.getenv("MAVEN_CENTRAL_TOKEN") ?: "")
+    publishingType.set("AUTOMATIC")
 }
 
 signing {

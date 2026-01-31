@@ -209,9 +209,8 @@ jobs:
 
       - name: Publish to Maven Central
         working-directory: sdk/java
-        run: ./gradlew publish -Psigning.gnupg.passphrase="$GPG_PASSPHRASE" -Psigning.gnupg.keyName="$GPG_KEY_ID"
+        run: ./gradlew publishToMavenCentral -Psigning.gnupg.passphrase="$GPG_PASSPHRASE" -Psigning.gnupg.keyName="$GPG_KEY_ID"
         env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
