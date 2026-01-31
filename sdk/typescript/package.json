@@ -1,6 +1,6 @@
 {
   "name": "@efsf/typescript",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ephemeral-First Security Framework - TypeScript SDK",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

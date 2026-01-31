@@ -71,7 +71,7 @@ npm install @efsf/typescript
 <dependency>
     <groupId>io.efsf</groupId>
     <artifactId>efsf-java</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -312,6 +312,28 @@ efsf/
 | Privacy by Design | Principles for privacy | EFSF provides concrete primitives |
 | NIST 800-88 | End-of-life sanitization | EFSF operationalizes at runtime |
 | Encryption at Rest | Protect stored data | EFSF ensures data doesn't stay stored |
+
+## Releasing a New Version
+
+All three SDKs share the same version number. To release a new version, update the version in these files:
+
+| File | Field |
+|------|-------|
+| `sdk/python/pyproject.toml` | `version = "x.y.z"` |
+| `sdk/python/efsf/__init__.py` | `__version__ = "x.y.z"` |
+| `sdk/typescript/package.json` | `"version": "x.y.z"` |
+| `sdk/typescript/src/index.ts` | `export const VERSION = 'x.y.z'` |
+| `sdk/java/build.gradle.kts` | `version = "x.y.z"` |
+
+Then commit, tag, and push:
+
+```bash
+git add -A && git commit -m "Release vx.y.z"
+git tag vx.y.z
+git push && git push --tags
+```
+
+The `v*` tag triggers the release workflow which publishes to PyPI, npm, and Maven Central.
 
 ## Contributing
 
