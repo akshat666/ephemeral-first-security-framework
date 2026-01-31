@@ -1,19 +1,19 @@
-package io.efsf.examples;
+package app.hideit.examples;
 
-import io.efsf.EphemeralStore;
-import io.efsf.certificate.AttestationAuthority;
-import io.efsf.certificate.DestructionCertificate;
-import io.efsf.record.DataClassification;
-import io.efsf.record.EphemeralRecord;
-import io.efsf.sealed.SealedExecution;
-import io.efsf.store.MemoryBackend;
+import app.hideit.EphemeralStore;
+import app.hideit.certificate.AttestationAuthority;
+import app.hideit.certificate.DestructionCertificate;
+import app.hideit.record.DataClassification;
+import app.hideit.record.EphemeralRecord;
+import app.hideit.sealed.SealedExecution;
+import app.hideit.store.MemoryBackend;
 
 import java.util.Map;
 
 /**
  * Basic usage example for the EFSF Java SDK.
  *
- * Run with: mvn exec:java -Dexec.mainClass="io.efsf.examples.BasicUsageExample"
+ * Run with: mvn exec:java -Dexec.mainClass="app.hideit.examples.BasicUsageExample"
  */
 public class BasicUsageExample {
 

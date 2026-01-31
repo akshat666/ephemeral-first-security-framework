@@ -2,9 +2,10 @@ plugins {
     java
     `java-library`
     `maven-publish`
+    signing
 }
 
-group = "io.efsf"
+group = "app.hideit"
 version = "0.1.0"
 
 java {
@@ -79,7 +80,32 @@ publishing {
                         url.set("https://www.apache.org/licenses/LICENSE-2.0")
                     }
                 }
+
+                scm {
+                    connection.set("scm:git:git://github.com/efsf/efsf.git")
+                    developerConnection.set("scm:git:ssh://github.com/efsf/efsf.git")
+                    url.set("https://github.com/efsf/efsf")
+                }
             }
         }
+    }
+
+    repositories {
+        maven {
+            name = "MavenCentral"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = System.getenv("MAVEN_USERNAME") ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ""
+            }
+        }
+    }
+}
+
+signing {
+    val signingPassword = System.getenv("GPG_PASSPHRASE")
+    if (signingPassword != null) {
+        useGpgCmd()
+        sign(publishing.publications["maven"])
     }
 }

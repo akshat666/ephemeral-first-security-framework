@@ -1,12 +1,12 @@
-package io.efsf.examples;
+package app.hideit.examples;
 
-import io.efsf.EphemeralStore;
-import io.efsf.certificate.AttestationAuthority;
-import io.efsf.certificate.DestructionCertificate;
-import io.efsf.exception.RecordNotFoundException;
-import io.efsf.record.DataClassification;
-import io.efsf.record.EphemeralRecord;
-import io.efsf.store.MemoryBackend;
+import app.hideit.EphemeralStore;
+import app.hideit.certificate.AttestationAuthority;
+import app.hideit.certificate.DestructionCertificate;
+import app.hideit.exception.RecordNotFoundException;
+import app.hideit.record.DataClassification;
+import app.hideit.record.EphemeralRecord;
+import app.hideit.store.MemoryBackend;
 
 import java.util.Map;
 import java.util.Optional;
