@@ -442,7 +442,7 @@ print(ctx.certificate.certificate_id)
 ### 7.2 Go
 
 ```go
-import "github.com/efsf/efsf-go"
+import "https://github.com/akshat666/ephemeral-first-security-framework/efsf-go"
 
 store, _ := efsf.NewStore(efsf.Config{
     Backend:     "redis://localhost:6379",

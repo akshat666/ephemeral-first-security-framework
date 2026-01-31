@@ -116,7 +116,7 @@ print(certificate.to_json())
 
 ```bash
 # Clone the repo
-git clone https://github.com/efsf/efsf.git
+git clone https://github.com/akshat666/ephemeral-first-security-framework.git
 cd efsf/sdk/python
 
 # Install dev dependencies

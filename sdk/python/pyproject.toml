@@ -57,10 +57,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/efsf/efsf"
-Documentation = "https://github.com/efsf/efsf#readme"
-Repository = "https://github.com/efsf/efsf"
-Issues = "https://github.com/efsf/efsf/issues"
+Homepage = "https://github.com/akshat666/ephemeral-first-security-framework"
+Documentation = "https://github.com/akshat666/ephemeral-first-security-framework#readme"
+Repository = "https://github.com/akshat666/ephemeral-first-security-framework.git"
+Issues = "https://github.com/akshat666/ephemeral-first-security-framework/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]

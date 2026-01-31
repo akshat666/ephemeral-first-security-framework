@@ -197,7 +197,7 @@ All destructive operations should support attestation:
 
 ## Questions?
 
-- Open a [Discussion](https://github.com/efsf/efsf/discussions) for general questions
+- Open a [Issue/Discussion](https://github.com/akshat666/ephemeral-first-security-framework/issues) for general questions
 - Join our community (links coming soon)
 - Email maintainers for security issues (see SECURITY.md)
 

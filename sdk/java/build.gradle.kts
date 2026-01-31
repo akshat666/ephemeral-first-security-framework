@@ -69,7 +69,7 @@ mavenPublishing {
     pom {
         name.set("EFSF Java SDK")
         description.set("Ephemeral-First Security Framework - Java SDK")
-        url.set("https://github.com/efsf/efsf")
+        url.set("https://github.com/akshat666/ephemeral-first-security-framework")
 
         licenses {
             license {
@@ -81,14 +81,14 @@ mavenPublishing {
         developers {
             developer {
                 name.set("EFSF Contributors")
-                url.set("https://github.com/efsf/efsf")
+                url.set("https://github.com/akshat666/ephemeral-first-security-framework/graphs/contributors")
             }
         }
 
         scm {
-            connection.set("scm:git:git://github.com/efsf/efsf.git")
-            developerConnection.set("scm:git:ssh://github.com/efsf/efsf.git")
-            url.set("https://github.com/efsf/efsf")
+            connection.set("scm:git:git://github.com/akshat666/ephemeral-first-security-framework.git")
+            developerConnection.set("scm:git:ssh://github.com/akshat666/ephemeral-first-security-framework.git")
+            url.set("https://github.com/akshat666/ephemeral-first-security-framework")
         }
     }
 }
