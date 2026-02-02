@@ -43,6 +43,7 @@ Modern security assumes data will exist forever and tries to protect it indefini
 
 Modern security architectures treat encryption as the primary defense, assuming
 that data will persist securely over time. This framework challenges that paradigm by formalizing ephemerality — a design principle where state expires and is irrecoverably destroyed — as a first-class security primitive.
+The design philosophy behind EFSF is informed by research and threat-modeling work contributed to the OWASP Threat Model Library, focusing on ephemeral isolation and privacy-preserving architectures.
 
 ## The EFSF Thesis
 
